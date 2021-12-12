@@ -153,17 +153,19 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">1</span>
+          <span class="site-state-item-count">3</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">1</span>
-        <span class="site-state-item-name">分类</span>
+          <a href="/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">2</span>
-        <span class="site-state-item-name">标签</span>
+          <a href="/tags/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
@@ -208,6 +210,186 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/12/12/%E5%9B%BE%E8%AE%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="zhou zhanghua">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="学无止境">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/12/12/%E5%9B%BE%E8%AE%BA/" class="post-title-link" itemprop="url">图论</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-12-12 20:30:42 / 修改时间：20:57:43" itemprop="dateCreated datePublished" datetime="2021-12-12T20:30:42+08:00">2021-12-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">刷题记录</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h4 id="欧拉路径"><a href="#欧拉路径" class="headerlink" title="欧拉路径"></a>欧拉路径</h4><p>欧拉路径即从某一顶点出发，通过且通过一次所有边的一条路径。如果能够回到出发点，那么称作欧拉回路。</p>
+<h5 id="判断欧拉路径"><a href="#判断欧拉路径" class="headerlink" title="判断欧拉路径"></a>判断欧拉路径</h5><p>对无向图：</p>
+<ul>
+<li>如果所有的顶点度数为偶数   &lt;=&gt; 欧拉通路</li>
+<li>如果只有两个顶点度数为奇数 &lt;=&gt; 欧拉路径</li>
+</ul>
+<p>对于有向图：</p>
+<ul>
+<li>如果所有顶点入度等于出度  &lt;=&gt; 欧拉通路</li>
+<li>如果只有两个点入读与出度不等，且差为 1 和 -1 &lt;=&gt; 欧拉路径</li>
+</ul>
+<h5 id="找到一欧拉路径"><a href="#找到一欧拉路径" class="headerlink" title="找到一欧拉路径"></a>找到一欧拉路径</h5><p>如果存在一个欧拉路径,那么从某一点出发进行dfs,那么：</p>
+<ul>
+<li>最终会搜索回到自身</li>
+<li>搜索到欧拉路径终点</li>
+</ul>
+<p>例如对下面的图：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">        -&gt; E -&gt; F</span><br><span class="line">A -&gt; B &lt;-&gt; G</span><br><span class="line">       &lt;-&gt; D</span><br></pre></td></tr></table></figure>
+<p>可能先搜索到path1: -&gt;E-&gt;F, 再搜索到path2: -&gt;G-&gt;B-&gt;D-&gt;B<br>从B开始的路径就是 B + path2 + path1</p>
+<p>如果要保证字典序，那么我们需要从字典序较小的节点进行搜索，最后再将路劲逆序，这样如果存在欧拉终点，欧拉终点是先退出的dfs，之后陆续退出的是字节序较大的点。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dfs(A) -&gt; dfs(B) -&gt; dfs(D) -&gt; dfs(B) -&gt; dfs(E) -&gt; dfs(F) -&gt; return</span><br><span class="line">                </span><br><span class="line">                                     -&gt; dfs(G) -&gt; dfs(B) -&gt; return</span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/reconstruct-itinerary/">重新安排行程</a></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;string&gt; <span class="title">findItinerary</span><span class="params">(vector&lt;vector&lt;string&gt;&gt;&amp; tickets)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">sort</span>(tickets.<span class="built_in">begin</span>(),tickets.<span class="built_in">end</span>());</span><br><span class="line">        <span class="built_in">reverse</span>(tickets.<span class="built_in">begin</span>(),tickets.<span class="built_in">end</span>());</span><br><span class="line">        unordered_map&lt;string,vector&lt;string&gt;&gt; g;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span>&amp; t:tickets)&#123;</span><br><span class="line">            g[t[<span class="number">0</span>]].<span class="built_in">push_back</span>(t[<span class="number">1</span>]);</span><br><span class="line">        &#125;</span><br><span class="line">        vector&lt;string&gt; ans;</span><br><span class="line">        function&lt;<span class="built_in"><span class="keyword">void</span></span>(string)&gt; dfs = [&amp;](string cur)&#123;</span><br><span class="line">            <span class="keyword">while</span>(g[cur].<span class="built_in">size</span>() &gt; <span class="number">0</span>)&#123;</span><br><span class="line">                string next = g[cur].<span class="built_in">back</span>();</span><br><span class="line">                g[cur].<span class="built_in">pop_back</span>();</span><br><span class="line">                <span class="built_in">dfs</span>(next);</span><br><span class="line">            &#125;</span><br><span class="line">            ans.<span class="built_in">push_back</span>(cur);</span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="built_in">dfs</span>(<span class="string">&quot;JFK&quot;</span>);</span><br><span class="line">        <span class="built_in">reverse</span>(ans.<span class="built_in">begin</span>(),ans.<span class="built_in">end</span>());</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/12/12/%E8%A6%86%E7%9B%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="zhou zhanghua">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="学无止境">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/12/12/%E8%A6%86%E7%9B%96/" class="post-title-link" itemprop="url">范围求值</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-12-12 14:39:49 / 修改时间：16:12:49" itemprop="dateCreated datePublished" datetime="2021-12-12T14:39:49+08:00">2021-12-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">刷题记录</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h3 id="获得某一范围的最大值"><a href="#获得某一范围的最大值" class="headerlink" title="获得某一范围的最大值"></a>获得某一范围的最大值</h3><h4 id="非固定长度-满足一定约束"><a href="#非固定长度-满足一定约束" class="headerlink" title="非固定长度(满足一定约束)"></a>非固定长度(满足一定约束)</h4><p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/maximum-fruits-harvested-after-at-most-k-steps/">摘水果</a><br>人固定在<code>startPos</code>,移动距离是<code>k</code>。范围就是 2*x + y &lt;= k, 先朝某一方向走x步，然后再朝另一方向走到<code>startPos</code>后走y步。<br>可以便利所有的[l,r]的情况，然后二分查找位置，利用前缀和相加。</p>
+<p>但是这条约束还可以进一步化简为 <code>r - l + min(r - startPos, startPos - l) &lt;= k</code><br>所以可以先找到最右边的<code>l</code>,然后往右走一步:</p>
+<ul>
+<li>满足约束，相加</li>
+<li>不满足约束，左边前进一步</li>
+</ul>
+<p>一些琐碎的细节：</p>
+<ul>
+<li>不满足约束时，<code>l</code>最多前进到<code>startPos</code>右边第一个。此时计算距离需要加<code>abs</code></li>
+<li>使用<code>tmp</code>来保存这一”滑动窗口”的值</li>
+<li>不满足条件时，<code>l</code>前进一步，r需要固定住<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">maxTotalFruits</span><span class="params">(vector&lt;vector&lt;<span class="keyword">int</span>&gt;&gt;&amp; fruits, <span class="keyword">int</span> startPos, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n = fruits.<span class="built_in">size</span>();</span><br><span class="line">        <span class="keyword">int</span> l = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(l &lt; n &amp;&amp; fruits[l][<span class="number">0</span>] + k &lt; startPos) l++;</span><br><span class="line">        <span class="keyword">int</span> ans = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> r = l;</span><br><span class="line">        <span class="keyword">for</span>(;r &lt; n &amp;&amp; fruits[r][<span class="number">0</span>] &lt;= startPos;r++)</span><br><span class="line">            ans += fruits[r][<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">int</span> left_wall = r;</span><br><span class="line">        <span class="keyword">int</span> tmp = ans;</span><br><span class="line">        <span class="keyword">for</span>(;r &lt; n &amp;&amp; l &lt;= left_wall;r++)&#123;</span><br><span class="line">            <span class="keyword">int</span> cost = fruits[r][<span class="number">0</span>] - fruits[l][<span class="number">0</span>] + </span><br><span class="line">            <span class="built_in">min</span>(fruits[r][<span class="number">0</span>] - startPos,<span class="built_in">abs</span>(startPos - fruits[l][<span class="number">0</span>])) ;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span>(cost &lt;= k)&#123;</span><br><span class="line">                tmp += fruits[r][<span class="number">1</span>];</span><br><span class="line">                ans = <span class="built_in">max</span>(ans,tmp);</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                tmp = tmp - fruits[l][<span class="number">1</span>];</span><br><span class="line">                r--;</span><br><span class="line">                l++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;   </span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/12/11/lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -239,7 +421,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-12-12 00:58:41" itemprop="dateModified" datetime="2021-12-12T00:58:41+08:00">2021-12-12</time>
+        <time title="修改时间：2021-12-12 15:05:41" itemprop="dateModified" datetime="2021-12-12T15:05:41+08:00">2021-12-12</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
