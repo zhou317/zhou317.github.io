@@ -20,26 +20,29 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="LAB2ABug耗时最长的bug:  产生原因1234567891011121314L:Leader F:Follower C:Candidate C:Crashs1(L)   s2(F)   s3(F)   &#x2F;&#x2F; initials1(C)   s2(L)   s3(F)   &#x2F;&#x2F; s2 send HeartBeat to s1(GoRoutine x1) and s3(GoRoutine x2)">
 <meta property="og:type" content="article">
-<meta property="og:title" content="操作系统基础">
-<meta property="og:url" content="http://example.com/2021/12/14/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:title" content="Raft 实验记录">
+<meta property="og:url" content="http://example.com/2021/12/19/Raft-%E5%AE%9E%E9%AA%8C%E8%AE%B0%E5%BD%95/index.html">
 <meta property="og:site_name" content="学无止境">
+<meta property="og:description" content="LAB2ABug耗时最长的bug:  产生原因1234567891011121314L:Leader F:Follower C:Candidate C:Crashs1(L)   s2(F)   s3(F)   &#x2F;&#x2F; initials1(C)   s2(L)   s3(F)   &#x2F;&#x2F; s2 send HeartBeat to s1(GoRoutine x1) and s3(GoRoutine x2)">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-12-14T05:29:26.000Z">
-<meta property="article:modified_time" content="2021-12-14T05:31:27.516Z">
+<meta property="article:published_time" content="2021-12-18T16:43:34.000Z">
+<meta property="article:modified_time" content="2021-12-18T16:58:21.288Z">
 <meta property="article:author" content="zhou zhanghua">
-<meta property="article:tag" content="操作系统">
+<meta property="article:tag" content="分布式系统">
+<meta property="article:tag" content="RAFT">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="http://example.com/2021/12/14/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/">
+<link rel="canonical" href="http://example.com/2021/12/19/Raft-%E5%AE%9E%E9%AA%8C%E8%AE%B0%E5%BD%95/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2021/12/14/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/","path":"2021/12/14/操作系统基础/","title":"操作系统基础"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2021/12/19/Raft-%E5%AE%9E%E9%AA%8C%E8%AE%B0%E5%BD%95/","path":"2021/12/19/Raft-实验记录/","title":"Raft 实验记录"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>操作系统基础 | 学无止境</title>
+<title>Raft 实验记录 | 学无止境</title>
   
 
 
@@ -131,7 +134,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -144,6 +147,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#LAB2A"><span class="nav-number">1.</span> <span class="nav-text">LAB2A</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Bug"><span class="nav-number">1.1.</span> <span class="nav-text">Bug</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -214,7 +218,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/12/14/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/12/19/Raft-%E5%AE%9E%E9%AA%8C%E8%AE%B0%E5%BD%95/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -227,7 +231,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          操作系统基础
+          Raft 实验记录
         </h1>
 
         <div class="post-meta-container">
@@ -239,7 +243,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2021-12-14 13:29:26 / 修改时间：13:31:27" itemprop="dateCreated datePublished" datetime="2021-12-14T13:29:26+08:00">2021-12-14</time>
+      <time title="创建时间：2021-12-19 00:43:34 / 修改时间：00:58:21" itemprop="dateCreated datePublished" datetime="2021-12-19T00:43:34+08:00">2021-12-19</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -247,7 +251,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">刷题记录</span></a>
+          <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">分布式系统</span></a>
         </span>
     </span>
 
@@ -268,7 +272,12 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        
+        <h3 id="LAB2A"><a href="#LAB2A" class="headerlink" title="LAB2A"></a>LAB2A</h3><h4 id="Bug"><a href="#Bug" class="headerlink" title="Bug"></a>Bug</h4><p>耗时最长的bug:</p>
+<ul>
+<li>产生原因<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">L:Leader F:Follower C:Candidate C:Crash</span><br><span class="line">s1(L)   s2(F)   s3(F)   // initial</span><br><span class="line">s1(C)   s2(L)   s3(F)   // s2 send HeartBeat to s1(GoRoutine x1) and s3(GoRoutine x2)</span><br><span class="line">// but s1 is crash, if we use Lock() and defer Unlock(), x1 will block x2 from Heartbeating until RPC faild(Takes Many times)</span><br><span class="line">s1(C) &lt;-AppendEntries- s2(L)</span><br><span class="line">...long time untile RPC return false</span><br><span class="line">s3(F) &lt;-AppendEntries- s2(L)    // at this moment, s3 has many election timeout</span><br><span class="line">[Server3:Term1] election timeout, Start an election</span><br><span class="line">[Server3:Term2] send requestVote to [Sever1]</span><br><span class="line">[Server3:Term2] send requestVote to [Sever2]</span><br><span class="line">...</span><br><span class="line">[Server3:Term20] election timeout, Start an election</span><br><span class="line">[Server3:Term21] send requestVote to [Sever1]</span><br><span class="line">[Server3:Term21] send requestVote to [Sever2]</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rf *Raft)</span> <span class="title">BroadcastHeartBeat</span><span class="params">()</span></span> &#123;</span><br><span class="line">	BroadCastPrintf(<span class="string">&quot;[Server%v:Term%d] BroadCastHeartBeat&quot;</span>, rf.me, rf.currentTerm)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="keyword">range</span> rf.peers &#123;</span><br><span class="line">		<span class="keyword">if</span> i == rf.me &#123;</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(server <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">            <span class="comment">// Bug here</span></span><br><span class="line">            <span class="comment">// rf.mu.Lock()</span></span><br><span class="line">            <span class="comment">// defer rf.mu.Unlock()</span></span><br><span class="line">			args := AppendEntriesArgs&#123;</span><br><span class="line">				Term:     rf.currentTerm,</span><br><span class="line">				LeaderId: rf.me,</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">var</span> reply AppendEntriesReply</span><br><span class="line">			EntryPrintf(<span class="string">&quot;[Server%v:Term%d] send AppendEntries RPC to [Server%d]&quot;</span>, rf.me, rf.currentTerm, server)</span><br><span class="line">			<span class="keyword">if</span> rf.sendAppendEntries(server, &amp;args, &amp;reply) &#123;</span><br><span class="line">                <span class="comment">// dosomething</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;(i)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+
     </div>
 
     
@@ -277,21 +286,19 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag"># 操作系统</a>
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag"># 分布式系统</a>
+              <a href="/tags/RAFT/" rel="tag"># RAFT</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2021/12/12/%E5%9B%BE%E8%AE%BA/" rel="prev" title="图论">
-                  <i class="fa fa-chevron-left"></i> 图论
+                <a href="/2021/12/14/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/" rel="prev" title="操作系统基础">
+                  <i class="fa fa-chevron-left"></i> 操作系统基础
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2021/12/19/Raft-%E5%AE%9E%E9%AA%8C%E8%AE%B0%E5%BD%95/" rel="next" title="Raft 实验记录">
-                  Raft 实验记录 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>

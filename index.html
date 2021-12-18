@@ -153,18 +153,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-count">5</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -201,6 +201,84 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/12/19/Raft-%E5%AE%9E%E9%AA%8C%E8%AE%B0%E5%BD%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="zhou zhanghua">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="学无止境">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/12/19/Raft-%E5%AE%9E%E9%AA%8C%E8%AE%B0%E5%BD%95/" class="post-title-link" itemprop="url">Raft 实验记录</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-12-19 00:43:34 / 修改时间：00:58:21" itemprop="dateCreated datePublished" datetime="2021-12-19T00:43:34+08:00">2021-12-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">分布式系统</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h3 id="LAB2A"><a href="#LAB2A" class="headerlink" title="LAB2A"></a>LAB2A</h3><h4 id="Bug"><a href="#Bug" class="headerlink" title="Bug"></a>Bug</h4><p>耗时最长的bug:</p>
+<ul>
+<li>产生原因<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">L:Leader F:Follower C:Candidate C:Crash</span><br><span class="line">s1(L)   s2(F)   s3(F)   // initial</span><br><span class="line">s1(C)   s2(L)   s3(F)   // s2 send HeartBeat to s1(GoRoutine x1) and s3(GoRoutine x2)</span><br><span class="line">// but s1 is crash, if we use Lock() and defer Unlock(), x1 will block x2 from Heartbeating until RPC faild(Takes Many times)</span><br><span class="line">s1(C) &lt;-AppendEntries- s2(L)</span><br><span class="line">...long time untile RPC return false</span><br><span class="line">s3(F) &lt;-AppendEntries- s2(L)    // at this moment, s3 has many election timeout</span><br><span class="line">[Server3:Term1] election timeout, Start an election</span><br><span class="line">[Server3:Term2] send requestVote to [Sever1]</span><br><span class="line">[Server3:Term2] send requestVote to [Sever2]</span><br><span class="line">...</span><br><span class="line">[Server3:Term20] election timeout, Start an election</span><br><span class="line">[Server3:Term21] send requestVote to [Sever1]</span><br><span class="line">[Server3:Term21] send requestVote to [Sever2]</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rf *Raft)</span> <span class="title">BroadcastHeartBeat</span><span class="params">()</span></span> &#123;</span><br><span class="line">	BroadCastPrintf(<span class="string">&quot;[Server%v:Term%d] BroadCastHeartBeat&quot;</span>, rf.me, rf.currentTerm)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="keyword">range</span> rf.peers &#123;</span><br><span class="line">		<span class="keyword">if</span> i == rf.me &#123;</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(server <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">            <span class="comment">// Bug here</span></span><br><span class="line">            <span class="comment">// rf.mu.Lock()</span></span><br><span class="line">            <span class="comment">// defer rf.mu.Unlock()</span></span><br><span class="line">			args := AppendEntriesArgs&#123;</span><br><span class="line">				Term:     rf.currentTerm,</span><br><span class="line">				LeaderId: rf.me,</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">var</span> reply AppendEntriesReply</span><br><span class="line">			EntryPrintf(<span class="string">&quot;[Server%v:Term%d] send AppendEntries RPC to [Server%d]&quot;</span>, rf.me, rf.currentTerm, server)</span><br><span class="line">			<span class="keyword">if</span> rf.sendAppendEntries(server, &amp;args, &amp;reply) &#123;</span><br><span class="line">                <span class="comment">// dosomething</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;(i)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
